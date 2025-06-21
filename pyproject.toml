@@ -1,0 +1,144 @@
+[project]
+name = "cellular-automata-slimemold"
+version = "0.0.1"
+description = "Simulación de autómatas celulares tipo slime mold ultra optimizada"
+authors = [{ name = "Naicriz", email = "isalazarjara@gmail.com" }]
+readme = "README.md"
+requires-python = ">=3.13"
+license = { text = "MIT" }
+keywords = ["cellular-automata", "slime-mold", "simulation", "pygame", "numba"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Education",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Artificial Life",
+    "Topic :: Games/Entertainment :: Simulation",
+]
+dependencies = [
+    "pygame>=2.6.1",
+    "numpy>=2.1.0,<2.4.0", # Compatible con Numba 0.61.2
+    "scipy>=1.15.3",
+    "numba>=0.61.2",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3.4",
+    "black>=25.1.0",
+    "ruff>=0.12.0",
+    "mypy>=1.13.0",
+    "pre-commit>=4.0.1",
+]
+
+[project.scripts]
+slime-mold = "app.main:main"
+
+[tool.poetry]
+packages = [{ include = "app" }]
+
+[tool.poetry.dependencies]
+python = "^3.13.4"
+pygame = "^2.6.1"
+numpy = "^2.1.0,<2.4.0"
+scipy = "^1.15.3"
+numba = "^0.61.2"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.4"
+black = "^25.1.0"
+ruff = "^0.12.0"
+mypy = "^1.13.0"
+pre-commit = "^4.0.1"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 88
+target-version = ["py313"]
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+)/
+'''
+
+[tool.ruff]
+target-version = "py313"
+line-length = 88
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "UP",  # pyupgrade
+    "N",   # pep8-naming
+    "RUF", # ruff-specific rules
+]
+ignore = [
+    "E501", # line too long, handled by black
+    "B008", # do not perform function calls in argument defaults
+    "C901", # too complex
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+docstring-code-format = true
+
+[tool.ruff.lint.isort]
+known-first-party = ["app"]
+
+[tool.mypy]
+python_version = "3.13"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+ignore_missing_imports = true
+check_untyped_defs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+strict_optional = true
+warn_unreachable = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+addopts = "-v --tb=short --strict-markers"
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+]
+
+[tool.coverage.run]
+source = ["app"]
+omit = ["tests/*", "*/migrations/*"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+]
