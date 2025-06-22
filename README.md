@@ -12,12 +12,11 @@
 
 Este proyecto implementa un **autómata celular continuo** que simula el comportamiento de organismos tipo **slime mold** (moho mucilaginoso). El sistema está diseñado con optimizaciones extremas para manejar grillas de hasta **1,000 x 1,000 células** con renderizado en tiempo real a **60 FPS**.
 
-### 🎯 Objetivos Académicos
+### 🎯 Objetivos
 
-- Implementar un autómata celular avanzado para la asignatura de Grafos y Lenguajes Formales
+- Implementar un autómata celular para la asignatura de Grafos y Lenguajes Formales
 - Demostrar comportamientos emergentes complejos a partir de reglas simples
-- Aplicar optimizaciones computacionales de alto nivel
-- Crear una herramienta interactiva para el estudio de sistemas complejos
+- Crear una herramienta interactiva
 
 ---
 
@@ -544,16 +543,8 @@ Las contribuciones son bienvenidas. Por favor:
 
 ## 📄 Licencia
 
-Este proyecto está bajo la Licencia MIT. Ver archivo `LICENSE` para más detalles.
+Este proyecto está bajo la Licencia MIT. Ver archivo `MIT` para más detalles.
 
----
-
-## 🎉 Agradecimientos
-
-- **Profesores** de Grafos y Lenguajes Formales por la inspiración académica
-- **Comunidad científica** por las referencias teóricas
-- **Desarrolladores** de NumPy, SciPy, Pygame y Numba por las herramientas
-- **Compañeros de clase** por la colaboración y feedback
 
 ---
 
