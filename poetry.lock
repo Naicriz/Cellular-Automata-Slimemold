@@ -727,4 +727,4 @@ dev = ["black", "mypy", "pre-commit", "pytest", "ruff"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.13.4"
-content-hash = "84fa936940d7f2b6620e2813bfca9e091c7b6ed5a0e44edf44571d742878be3a"
+content-hash = "78849526a5424b24a0c7d7f8c110e038fed914255a6f45c80dafaf16fe3b5082"
