@@ -5,7 +5,7 @@ import sys
 
 import numpy as np
 import pygame
-from numba import jit
+from numba import jit, prange
 from scipy import ndimage
 
 # Parámetros para ventana y grilla
@@ -29,13 +29,13 @@ def activation_jit(x):
 
 @jit(nopython=True, fastmath=True, cache=True, parallel=True)
 def activation_vectorized(arr):
-    """Activación vectorizada JIT con paralelización"""
+    """Versión optimizada que SÍ se paraleliza"""
     result = np.empty_like(arr)
-    flat_arr = arr.flat
-    flat_result = result.flat
-    for i in range(arr.size):
-        x = flat_arr[i]
-        flat_result[i] = -1.0 / (0.89 * x * x + 1.0) + 1.0
+    # Numba puede paralelizar este estilo de bucle automáticamente
+    for i in prange(arr.shape[0]):  # pylint: disable=not-an-iterable
+        for j in prange(arr.shape[1]):  # pylint: disable=not-an-iterable
+            x = arr[i, j]
+            result[i, j] = -1.0 / (0.89 * x * x + 1.0) + 1.0
     return result
 
 
@@ -132,7 +132,7 @@ class UltraSlimeMold:
         self.min_zoom = (
             1.0  # No permitir zoom out más allá del tamaño completo del grid
         )
-        self.max_zoom = 20.0  # Zoom mucho más allá del grid size
+        self.max_zoom = 6.0  # Máximo zoom para evitar problemas de rendimiento
 
         # Control de arrastre para navegación
         self.dragging = False
@@ -140,8 +140,8 @@ class UltraSlimeMold:
         self.drag_start_offset = (0, 0)
 
         # Control de efectos visuales
-        self.glow_effects = True  # Efectos de brillo
-        self.particle_effects = True  # Efectos de partículas (pueden ser costosos)
+        self.glow_effects = False  # Efectos de brillo
+        self.particle_effects = False  # Efectos de partículas (pueden ser costosos)
 
         # Optimizaciones extremas
         self.render_scale = RENDER_SCALE  # Escala de renderizado dinámica
