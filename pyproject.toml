@@ -1,6 +1,6 @@
 [project]
 name = "cellular-automata-slimemold"
-version = "0.0.1"
+version = "1.0.0"
 description = "Simulación de autómatas celulares tipo slime mold ultra optimizada"
 authors = [{ name = "Naicriz", email = "isalazarjara@gmail.com" }]
 readme = "README.md"
