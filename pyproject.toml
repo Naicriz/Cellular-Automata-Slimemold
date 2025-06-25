@@ -1,7 +1,7 @@
 [project]
 name = "cellular-automata-slimemold"
-version = "1.0.0"
-description = "Simulación de autómatas celulares tipo slime mold ultra optimizada"
+version = "2.0.0"
+description = "Simulación de autómatas celulares tipo slime mold(moho mucilaginoso)."
 authors = [{ name = "Naicriz", email = "isalazarjara@gmail.com" }]
 readme = "README.md"
 requires-python = ">=3.13"

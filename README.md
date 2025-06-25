@@ -1,4 +1,4 @@
-# 🧬 Cellular Automata - Slime Mold Simulator
+# 🧬 Cellular Automata - Slime Mold Simulator (HAY QUE ACTUALIZAR)
 
 **Asignatura**: Grafos y Lenguajes Formales
 **Universidad**: Universidad Tecnológica Metropolitana
@@ -544,7 +544,6 @@ Las contribuciones son bienvenidas. Por favor:
 ## 📄 Licencia
 
 Este proyecto está bajo la Licencia MIT. Ver archivo `MIT` para más detalles.
-
 
 ---
 
