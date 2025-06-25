@@ -39,8 +39,6 @@ app/
 │   │   ├── slider.py         # Sliders de valores
 │   │   ├── switch.py         # Switches/toggles
 │   │   └── menu.py           # Menú principal
-│   ├── interface.py          # Interfaz principal
-│   └── events.py             # Manejo de eventos
 ├── utils/                     # 🛠️ Utilidades
 │   ├── __init__.py
 │   ├── cache.py              # Sistema de cache inteligente
@@ -68,8 +66,6 @@ app/
 
 ### 4. **ui/** - Interfaz de Usuario
 - `components/`: Componentes reutilizables (botones, sliders, switches)
-- `interface.py`: Interfaz principal
-- `events.py`: Manejo centralizado de eventos
 
 ### 5. **utils/** - Utilidades Compartidas
 - `cache.py`: Sistema de cache inteligente
