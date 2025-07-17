@@ -20,6 +20,8 @@ class InteractiveSlider:
         label,
         callback,
         description="",
+        config=None,  # <-- Nuevo parámetro opcional
+        step=None,  # Nuevo: paso de incremento
     ):
         self.rect = pygame.Rect(x, y, width, height)
         self.min_val = min_val
@@ -30,16 +32,30 @@ class InteractiveSlider:
         self.callback = callback
         self.is_dragging = False
         self.is_hovered = False
+        # Paso de incremento
+        if step is not None:
+            self.step = step
+        elif "Filtro" in label:
+            self.step = 0.01
+        else:
+            self.step = 1
 
         # Handle del slider
         self.handle_radius = 10
 
-        # Crear configuración de colores
-        self.config = ButtonConfig(0, 0, 0, 0, "", None)
+        # Configuración de colores y fuentes
+        if config is not None:
+            self.config = config
+        else:
+            # Usar una función lambda vacía para action y colores RGB válidos
+            self.config = ButtonConfig(0, 0, 0, 0, "", lambda: None)
 
         # Configurar fuentes
         try:
-            self.font = pygame.font.SysFont("arial", 14)
+            self.font = pygame.font.SysFont(
+                "arial",
+                self.config.font_size if hasattr(self.config, "font_size") else 14,
+            )
             self.desc_font = pygame.font.SysFont("arial", 16, bold=True)
             self.label_font = pygame.font.Font(None, 24)
         except (pygame.error, OSError):
@@ -61,10 +77,15 @@ class InteractiveSlider:
                 ratio = relative_x / self.rect.width
                 new_val = self.min_val + (self.max_val - self.min_val) * ratio
 
-                if isinstance(self.min_val, int):
-                    new_val = int(new_val)
+                # Redondear al múltiplo más cercano de self.step
+                if self.step < 1:
+                    new_val = round(
+                        round((new_val - self.min_val) / self.step) * self.step
+                        + self.min_val,
+                        2,
+                    )
                 else:
-                    new_val = round(new_val, 1)
+                    new_val = int(round(new_val))
 
                 if new_val != self.current_val:
                     self.current_val = new_val
@@ -86,17 +107,29 @@ class InteractiveSlider:
         """Dibuja el slider con diseño modernizado"""
         # Texto descriptivo arriba del slider
         if self.description:
-            desc_text = self.desc_font.render(
-                self.description, True, self.config.slider_label_color
+            desc_color = (
+                self.config.slider_label_color
+                if self.config.slider_label_color is not None
+                else (255, 255, 255)
             )
+            desc_text = self.desc_font.render(self.description, True, desc_color)
             desc_rect = desc_text.get_rect()
             desc_rect.centerx = self.rect.centerx
             desc_rect.bottom = self.rect.top - 22
             surface.blit(desc_text, desc_rect)
 
         # Label con valor actual arriba del track
-        label_text = f"{self.label}: {int(self.current_val)}"
-        label_surface = self.label_font.render(label_text, True, self.config.text_color)
+        label_color = (
+            self.config.text_color
+            if self.config.text_color is not None
+            else (255, 255, 255)
+        )
+        # Mostrar dos decimales si es filtro, si no como entero
+        if "Filtro" in self.label:
+            label_text = f"{self.label}: {self.current_val:.2f}"
+        else:
+            label_text = f"{self.label}: {int(self.current_val)}"
+        label_surface = self.label_font.render(label_text, True, label_color)
         label_rect = label_surface.get_rect()
         label_rect.x = self.rect.x
         label_rect.y = self.rect.y - 25
@@ -105,8 +138,12 @@ class InteractiveSlider:
         # Track del slider (línea principal)
         track_color = (
             self.config.slider_track_hover
-            if self.is_hovered
-            else self.config.slider_track_color
+            if self.is_hovered and self.config.slider_track_hover is not None
+            else (
+                self.config.slider_track_color
+                if self.config.slider_track_color is not None
+                else (200, 200, 200)
+            )
         )
 
         # Línea de track principal
@@ -123,10 +160,15 @@ class InteractiveSlider:
         handle_x = self.rect.left + int(ratio * self.rect.width)
 
         # Línea de progreso (desde el inicio hasta el handle)
+        progress_color = (
+            self.config.slider_progress_color
+            if self.config.slider_progress_color is not None
+            else (100, 100, 255)
+        )
         if ratio > 0:
             pygame.draw.line(
                 surface,
-                self.config.slider_progress_color,
+                progress_color,
                 (self.rect.left, self.rect.centery),
                 (handle_x, self.rect.centery),
                 4,
@@ -135,8 +177,12 @@ class InteractiveSlider:
         # Handle del slider (círculo)
         handle_color = (
             self.config.slider_handle_active
-            if self.is_dragging
-            else self.config.slider_handle_color
+            if self.is_dragging and self.config.slider_handle_active is not None
+            else (
+                self.config.slider_handle_color
+                if self.config.slider_handle_color is not None
+                else (0, 200, 140)
+            )
         )
 
         # Dibujar handle principal
@@ -145,9 +191,14 @@ class InteractiveSlider:
         )
 
         # Borde del handle
+        border_color = (
+            self.config.slider_handle_border
+            if self.config.slider_handle_border is not None
+            else (85, 90, 95)
+        )
         pygame.draw.circle(
             surface,
-            self.config.slider_handle_border,
+            border_color,
             (handle_x, self.rect.centery),
             self.handle_radius,
             2,
@@ -170,15 +221,19 @@ class Slider:
         self.font = pygame.font.Font(None, 24)
 
         # Configuración de colores modernizada
-        self.config = ButtonConfig(0, 0, 0, 0, "", None)
+        self.config = ButtonConfig(0, 0, 0, 0, "", lambda: None)
 
     def draw(self, surface):
         """Dibuja el slider con colores modernizados"""
         # Track del slider
         track_color = (
             self.config.slider_track_hover
-            if self.hovered
-            else self.config.slider_track_color
+            if self.hovered and self.config.slider_track_hover is not None
+            else (
+                self.config.slider_track_color
+                if self.config.slider_track_color is not None
+                else (200, 200, 200)
+            )
         )
         pygame.draw.line(
             surface,
@@ -193,10 +248,15 @@ class Slider:
         handle_x = self.rect.left + int(ratio * self.rect.width)
 
         # Línea de progreso
+        progress_color = (
+            self.config.slider_progress_color
+            if self.config.slider_progress_color is not None
+            else (100, 100, 255)
+        )
         if ratio > 0:
             pygame.draw.line(
                 surface,
-                self.config.slider_progress_color,
+                progress_color,
                 (self.rect.left, self.rect.centery),
                 (handle_x, self.rect.centery),
                 4,
@@ -205,26 +265,38 @@ class Slider:
         # Handle del slider
         handle_color = (
             self.config.slider_handle_active
-            if self.dragging
-            else self.config.slider_handle_color
+            if self.dragging and self.config.slider_handle_active is not None
+            else (
+                self.config.slider_handle_color
+                if self.config.slider_handle_color is not None
+                else (0, 200, 140)
+            )
         )
         pygame.draw.circle(
             surface, handle_color, (handle_x, self.rect.centery), self.handle_radius
         )
 
         # Borde del handle
+        border_color = (
+            self.config.slider_handle_border
+            if self.config.slider_handle_border is not None
+            else (85, 90, 95)
+        )
         pygame.draw.circle(
             surface,
-            self.config.slider_handle_border,
+            border_color,
             (handle_x, self.rect.centery),
             self.handle_radius,
             2,
         )
 
         # Label modernizado
-        label = self.font.render(
-            f"{self.label}: {int(self.value)}", True, self.config.text_color
+        label_color = (
+            self.config.text_color
+            if self.config.text_color is not None
+            else (255, 255, 255)
         )
+        label = self.font.render(f"{self.label}: {int(self.value)}", True, label_color)
         surface.blit(label, (self.rect.x, self.rect.y - 25))
 
     def handle_event(self, event):

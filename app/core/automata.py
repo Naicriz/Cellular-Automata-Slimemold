@@ -594,6 +594,16 @@ class UltraSlimeMold:
             self.last_fps_update = current_time
 
         # Información actual
+        filtro = self.settings.filters[self.current_filter]
+        filtro_linea1 = (
+            f"Filtro: [{filtro[0,0]:.2f}  {filtro[0,1]:.2f}  {filtro[0,2]:.2f}]"
+        )
+        filtro_linea2 = (
+            f"        [{filtro[1,0]:.2f}  {filtro[1,1]:.2f}  {filtro[1,2]:.2f}]"
+        )
+        filtro_linea3 = (
+            f"        [{filtro[2,0]:.2f}  {filtro[2,1]:.2f}  {filtro[2,2]:.2f}]"
+        )
         current_info = {
             "fps": self.cached_fps,
             "generation": self.generation,
@@ -602,6 +612,9 @@ class UltraSlimeMold:
             "eraser_size": self.eraser_size,
             "skip_frames": self.skip_frames,
             "paused": self.paused,
+            "filtro_linea1": filtro_linea1,
+            "filtro_linea2": filtro_linea2,
+            "filtro_linea3": filtro_linea3,
         }
 
         # Verificar si necesitamos actualizar el cache
@@ -619,12 +632,15 @@ class UltraSlimeMold:
                 f"Borrador: {current_info['eraser_size']}px",
                 f"Skip: {current_info['skip_frames']} frames",
                 f"Estado: {'PAUSADO' if current_info['paused'] else 'EJECUTANDO'}",
+                current_info["filtro_linea1"],
+                current_info["filtro_linea2"],
+                current_info["filtro_linea3"],
             ]
 
             # Calcular dimensiones del panel
             line_height = 22
             panel_height = len(info_lines) * line_height + 20
-            panel_width = 220
+            panel_width = 380  # Más ancho para el filtro
 
             # Crear superficie con transparencia
             self.cached_info_surface = pygame.Surface(
