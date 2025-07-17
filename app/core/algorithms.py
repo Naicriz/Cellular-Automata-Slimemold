@@ -45,28 +45,28 @@ def enhanced_color_mapping_with_smooth_transitions(normalized):
             t = max(0.0, min(1.0, val))
             smooth_val = t * t * (3.0 - 2.0 * t)
 
-            # Paleta mejorada con transiciones suaves
+            # Paleta cálida: negro → rojo intenso → naranja fuerte → dorado → blanco
             if smooth_val <= 0.2:
-                # Transición suave desde negro a azul oscuro
+                # Negro a rojo intenso
                 factor = smooth_val / 0.2
                 smooth_factor = factor * factor * (3.0 - 2.0 * factor)
-                color_array[y, x, 0] = np.uint8(smooth_factor * 30)
-                color_array[y, x, 1] = np.uint8(smooth_factor * 20)
-                color_array[y, x, 2] = np.uint8(smooth_factor * 80)
+                color_array[y, x, 0] = np.uint8(smooth_factor * 180)  # R: 0→180
+                color_array[y, x, 1] = np.uint8(smooth_factor * 20)  # G: 0→20
+                color_array[y, x, 2] = np.uint8(smooth_factor * 10)  # B: 0→10
             elif smooth_val <= 0.5:
-                # Transición suave de azul a verde
+                # Rojo intenso a naranja fuerte
                 factor = (smooth_val - 0.2) / 0.3
                 smooth_factor = factor * factor * (3.0 - 2.0 * factor)
-                color_array[y, x, 0] = np.uint8(30 + smooth_factor * 50)
-                color_array[y, x, 1] = np.uint8(20 + smooth_factor * 100)
-                color_array[y, x, 2] = np.uint8(80 - smooth_factor * 40)
+                color_array[y, x, 0] = np.uint8(180 + smooth_factor * 60)  # R: 180→240
+                color_array[y, x, 1] = np.uint8(20 + smooth_factor * 120)  # G: 20→140
+                color_array[y, x, 2] = np.uint8(10 + smooth_factor * 30)  # B: 10→40
             else:
-                # Transición suave de verde a amarillo/blanco
+                # Naranja fuerte a dorado/blanco
                 factor = (smooth_val - 0.5) / 0.5
                 smooth_factor = factor * factor * (3.0 - 2.0 * factor)
-                color_array[y, x, 0] = np.uint8(80 + smooth_factor * 175)
-                color_array[y, x, 1] = np.uint8(120 + smooth_factor * 135)
-                color_array[y, x, 2] = np.uint8(40 + smooth_factor * 100)
+                color_array[y, x, 0] = np.uint8(240 + smooth_factor * 15)  # R: 240→255
+                color_array[y, x, 1] = np.uint8(140 + smooth_factor * 115)  # G: 140→255
+                color_array[y, x, 2] = np.uint8(40 + smooth_factor * 215)  # B: 40→255
 
     return color_array
 

@@ -1,7 +1,7 @@
 """Constantes del proyecto Slime Mold Automata"""
 
 # Dimensiones de ventana
-DEFAULT_WINDOW_WIDTH = 1600
+DEFAULT_WINDOW_WIDTH = 1700
 DEFAULT_WINDOW_HEIGHT = 1000
 
 # Configuración del grid

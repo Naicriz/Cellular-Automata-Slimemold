@@ -29,7 +29,11 @@ class SimulationSettings:
         if self.filters is None:
             self.filters = {
                 "default": np.array(
-                    [[0.8, -0.85, 0.8], [-0.85, -0.2, -0.85], [0.8, -0.85, 0.8]],
+                    [
+                        [0.8, -0.85, 0.8],
+                        [-0.85, -0.2, -0.85],
+                        [0.8, -0.85, 0.8],
+                    ],
                     dtype=np.float32,
                 ),
             }

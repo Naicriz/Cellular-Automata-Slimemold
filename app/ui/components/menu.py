@@ -33,7 +33,8 @@ class InteractiveMenu:
         self.menu_x = 10
         self.menu_y = 10
         # Ancho del menú basado en el ancho de la ventana
-        self.menu_width = int(self.automata.window_width * MENU_WIDTH_RATIO)
+        # Más ancho para sliders y textos largos
+        self.menu_width = max(int(self.automata.window_width * MENU_WIDTH_RATIO), 480)
 
         # Calcular altura automáticamente basada en componentes
         self.header_height = HEADER_HEIGHT
@@ -65,19 +66,21 @@ class InteractiveMenu:
     def _calculate_menu_height(self):
         """Calcula la altura del menú automáticamente según componentes"""
         # Componentes del menú con sus respectivas alturas
+        # Sumar espacio para sliders de filtro extra
         components_height = (
             self.header_height  # 40px
             + 15  # padding inicial
             + (3 * 30)
             + (2 * 35)  # botones acción: 160px
+            + (2 * 35)  # calidad
             + 15  # separación
             + (2 * 30)
             + (1 * 35)  # switches: 95px
-            + 15  # separación
+            + 15  # separación tras switches (menos espacio)
             + 10  # espacio extra para sliders
             + (3 * 65)  # sliders: 195px
-            + 20  # separación
-            + 27  # botones calidad
+            + (3 * 65)  # sliders de filtro: 195px
+            + 20  # separación extra final (menos espacio)
             + 15  # padding final
         )
         self.menu_height = components_height
@@ -90,7 +93,29 @@ class InteractiveMenu:
         control_width = int(self.menu_width * 0.75)
         control_height = 30
         control_spacing = 35
-        section_spacing = 15
+        # section_spacing = 15  # Eliminar si no se usa
+
+        # Crear ButtonConfig para sliders (debe ir antes de cualquier uso)
+        slider_config = ButtonConfig(
+            0,
+            0,
+            0,
+            0,
+            "",
+            lambda: None,
+            color_normal=(32, 34, 37),
+            color_hover=(44, 47, 51),
+            color_active=(88, 101, 242),
+            text_color=(240, 240, 255),
+            font_size=18,
+            slider_track_color=(45, 48, 55),
+            slider_track_hover=(60, 65, 75),
+            slider_handle_color=(0, 200, 140),
+            slider_handle_active=(0, 230, 160),
+            slider_handle_border=(85, 90, 95),
+            slider_progress_color=(88, 101, 242),
+            slider_label_color=(230, 240, 255),
+        )
 
         # Punto de inicio después del header
         start_y = self.menu_y + self.header_height + 15
@@ -104,7 +129,7 @@ class InteractiveMenu:
                 current_y,
                 control_width,
                 control_height,
-                "🔄 Reiniciar Grid",
+                "Reiniciar Grid",
                 self._reset_grid,
             ),
             ButtonConfig(
@@ -112,7 +137,7 @@ class InteractiveMenu:
                 current_y + control_spacing,
                 control_width,
                 control_height,
-                "⏸️ Pausar" if not self.automata.paused else "▶️ Reanudar",
+                "Pausar" if not self.automata.paused else "Reanudar",
                 self._toggle_pause,
             ),
             ButtonConfig(
@@ -120,20 +145,43 @@ class InteractiveMenu:
                 current_y + control_spacing * 2,
                 control_width,
                 control_height,
-                "🔍 Reset Zoom",
+                "Reset Zoom",
                 self._reset_zoom,
             ),
         ]
 
+        # SECCIÓN 1.1: Botones de calidad (junto a los de acción principal)
+        mini_width = int(self.menu_width * 0.38)
+        mini_height = int(control_height * 0.9)
+        mini_spacing = 8
+        quality_controls = [
+            ButtonConfig(
+                col_x,
+                current_y + control_spacing * 3 + 5,
+                mini_width,
+                mini_height,
+                "Calidad +",
+                self._increase_quality,
+            ),
+            ButtonConfig(
+                col_x + mini_width + mini_spacing,
+                current_y + control_spacing * 3 + 5,
+                mini_width,
+                mini_height,
+                "Calidad -",
+                self._decrease_quality,
+            ),
+        ]
+
         # SECCIÓN 2: Switches para opciones toggle
-        current_y = start_y + control_spacing * 3 + section_spacing
+        current_y = start_y + control_spacing * 4 + 20
         switches = [
             ButtonConfig(
                 col_x,
                 current_y,
                 control_width,
                 control_height,
-                "📊 Info",
+                "Info",
                 self._toggle_info,
                 is_switch=True,
                 switch_state=self.automata.show_info,
@@ -143,7 +191,7 @@ class InteractiveMenu:
                 current_y + control_spacing,
                 control_width,
                 control_height,
-                "📺 V-Sync",
+                "V-Sync",
                 self._toggle_vsync,
                 is_switch=True,
                 switch_state=self.automata.vsync_enabled,
@@ -151,12 +199,10 @@ class InteractiveMenu:
         ]
 
         # SECCIÓN 3: Sliders para valores continuos
-        current_y = start_y + control_spacing * 7 + section_spacing * 2 + 5
+        current_y = start_y + control_spacing * 6 + 80  # Más espacio tras switches
         slider_width = int(self.menu_width * 0.8)
         slider_height = 20
         slider_spacing = 65
-
-        # Crear sliders con descripciones
         sliders = [
             InteractiveSlider(
                 col_x + (control_width - slider_width) // 2,
@@ -166,9 +212,10 @@ class InteractiveMenu:
                 MIN_ZOOM,
                 MAX_ZOOM,
                 self.automata.zoom_factor,
-                "🔍 Zoom",
+                "Zoom",
                 self._set_zoom,
-                "🔍 NIVEL DE ZOOM",
+                "NIVEL DE ZOOM",
+                slider_config,
             ),
             InteractiveSlider(
                 col_x + (control_width - slider_width) // 2,
@@ -178,9 +225,10 @@ class InteractiveMenu:
                 MIN_ERASER_SIZE,
                 MAX_ERASER_SIZE,
                 self.automata.eraser_size,
-                "🖌️ Borrador",
+                "Borrador",
                 self._set_eraser_size,
-                "🖌️ TAMAÑO DEL BORRADOR",
+                "TAMAÑO DEL BORRADOR",
+                slider_config,
             ),
             InteractiveSlider(
                 col_x + (control_width - slider_width) // 2,
@@ -190,51 +238,88 @@ class InteractiveMenu:
                 1,  # ✅ min_val
                 10,  # ✅ max_val
                 self.automata.skip_frames,
-                "⚡ Frame Skip",
+                "Frame Skip",
                 self._set_frame_skip,
-                "⚡ SALTO DE FRAMES",
+                "SALTO DE FRAMES",
+                slider_config,
             ),
         ]
 
-        # SECCIÓN 4: Botones de calidad
-        current_y += slider_spacing * 3 + 20
-        mini_width = int(self.menu_width * 0.38)
-        mini_height = int(control_height * 0.9)
-        mini_spacing = 8
+        # --- SLIDERS DE FILTRO SIMÉTRICO ---
+        filtro = self.automata.settings.filters["default"]
+        val_0 = float(filtro[0, 0])
+        val_1 = float(filtro[0, 1])
+        val_c = float(filtro[1, 1])
 
-        quality_controls = [
-            ButtonConfig(
-                col_x,
-                current_y,
-                mini_width,
-                mini_height,
-                "📈 Calidad +",
-                self._increase_quality,
+        def set_filtro_0(val):
+            f = self.automata.settings.filters["default"]
+            f[0, 0] = f[0, 2] = f[2, 0] = f[2, 2] = round(val, 2)
+            self._invalidate_cache()
+
+        def set_filtro_1(val):
+            f = self.automata.settings.filters["default"]
+            f[0, 1] = f[1, 0] = f[1, 2] = f[2, 1] = round(val, 2)
+            self._invalidate_cache()
+
+        def set_filtro_c(val):
+            f = self.automata.settings.filters["default"]
+            f[1, 1] = round(val, 2)
+            self._invalidate_cache()
+
+        filtro_sliders = [
+            InteractiveSlider(
+                col_x + (control_width - slider_width) // 2,
+                current_y + slider_spacing * 3 + 30,
+                slider_width,
+                slider_height,
+                -2.0,
+                2.0,
+                val_0,
+                "Filtro Esquinas",
+                set_filtro_0,
+                "Valor de las esquinas (simétrico)",
+                slider_config,
+                # Mostrar dos decimales en la etiqueta
             ),
-            ButtonConfig(
-                col_x + mini_width + mini_spacing,
-                current_y,
-                mini_width,
-                mini_height,
-                "📉 Calidad -",
-                self._decrease_quality,
+            InteractiveSlider(
+                col_x + (control_width - slider_width) // 2,
+                current_y + slider_spacing * 4 + 30,
+                slider_width,
+                slider_height,
+                -2.0,
+                2.0,
+                val_1,
+                "Filtro Lados",
+                set_filtro_1,
+                "Valor de los lados (simétrico)",
+                slider_config,
+            ),
+            InteractiveSlider(
+                col_x + (control_width - slider_width) // 2,
+                current_y + slider_spacing * 5 + 30,
+                slider_width,
+                slider_height,
+                -2.0,
+                2.0,
+                val_c,
+                "Filtro Centro",
+                set_filtro_c,
+                "Valor del centro",
+                slider_config,
             ),
         ]
 
         # Crear objetos de control
         for config in action_buttons:
             controls.append(InteractiveButton(config))
-
-        for config in switches:
-            controls.append(InteractiveSwitch(config))
-
-        # Agregar sliders
-        for slider in sliders:
-            controls.append(slider)
-
-        # Agregar botones de calidad
         for config in quality_controls:
             controls.append(InteractiveButton(config))
+        for config in switches:
+            controls.append(InteractiveSwitch(config))  # type: ignore
+        for slider in sliders:
+            controls.append(slider)  # type: ignore
+        for slider in filtro_sliders:
+            controls.append(slider)  # type: ignore
 
         return controls
 
@@ -366,9 +451,32 @@ class InteractiveMenu:
             # Dibujar controles
             for control in self.controls:
                 # Ajustar posición relativa al menú
-                adjusted_surface = pygame.Surface(control.rect.size, pygame.SRCALPHA)
-                if hasattr(control, "draw"):
-                    # Crear una superficie temporal para el control
+                # Si es un slider, crear superficie más alta y ajustar el rect
+                if hasattr(control, "current_val") and hasattr(control, "draw"):
+                    extra_top = 40  # Espacio extra arriba para textos
+                    surf_size = (control.rect.width, control.rect.height + extra_top)
+                    adjusted_surface = pygame.Surface(surf_size, pygame.SRCALPHA)
+                    # Guardar rect original
+                    original_rect = control.rect.copy()
+                    # Mover el rect temporalmente hacia abajo
+                    control.rect = pygame.Rect(
+                        0, extra_top, control.rect.width, control.rect.height
+                    )
+                    control.draw(adjusted_surface)
+                    # Restaurar rect
+                    control.rect = original_rect
+                    # Blitear en posición relativa, ajustando el offset
+                    menu_surface.blit(
+                        adjusted_surface,
+                        (
+                            control.rect.x - self.menu_x,
+                            control.rect.y - self.menu_y - extra_top,
+                        ),
+                    )
+                else:
+                    adjusted_surface = pygame.Surface(
+                        control.rect.size, pygame.SRCALPHA
+                    )
                     temp_rect = pygame.Rect(
                         0, 0, control.rect.width, control.rect.height
                     )
@@ -376,8 +484,6 @@ class InteractiveMenu:
                     control.rect = temp_rect
                     control.draw(adjusted_surface)
                     control.rect = original_rect
-
-                    # Blitear en posición relativa
                     menu_surface.blit(
                         adjusted_surface,
                         (control.rect.x - self.menu_x, control.rect.y - self.menu_y),
