@@ -121,32 +121,13 @@ Si usas VS Code, puedes ejecutar las tareas predefinidas:
 
 | Tecla     | Función                                  |
 | --------- | ----------------------------------------- |
-| `R`     | 🔄 Reiniciar grid con valores aleatorios |
 | `SPACE` | ⏸️/▶️ Pausar/Reanudar simulación     |
-| `I`     | 📊 Toggle panel de información           |
-| `ESC`   | 🚪 Salir del programa                     |
 
 ### Controles de Visualización
 
 | Tecla | Función                                    |
 | ----- | ------------------------------------------- |
-| `+` | 📈 Mejor calidad de renderizado (menos FPS) |
-| `-` | 📉 Menor calidad de renderizado (más FPS)  |
-| `F` | 🎬 Cambiar frame skipping                   |
-| `G` | ✨ Toggle efectos de brillo bioluminiscente |
-| `P` | 🎆 Toggle efectos de partículas            |
-| `V` | 📺 Toggle V-Sync (anti-flicker)             |
-| `Z` | 🔍 Reset zoom a 1.0x                        |
-
-### Controles Interactivos
-
-| Control                   | Función                                   |
-| ------------------------- | ------------------------------------------ |
-| **Clic Izquierdo**  | 🖱️ Modo borrador (mantener presionado)   |
-| **Shift + Clic**    | 🖱️ Modo arrastre de vista                |
-| **Clic Derecho**    | 🖱️ Modo arrastre alternativo             |
-| **Rueda del Mouse** | 🔍 Zoom in/out (1.0x - 20.0x)              |
-| `E`                     | 🖌️ Cambiar tamaño del borrador (1-10px) |
+| `M` | 📈 Mejor calidad de renderizado (menos FPS) |
 
 ---
 
@@ -458,8 +439,6 @@ def convergence_analysis(initial_state):
 
 - **Tamaño de grilla**: 100×100, 500×500, 1000×1000
 - **Kernels alternativos**: Diffusion, Edge detection, Custom
-- **Funciones de activación**: Tanh, Sigmoid, ReLU modificado
-- **Condiciones iniciales**: Aleatorio, centrado, múltiples focos
 
 ---
 
@@ -508,36 +487,6 @@ def convergence_analysis(initial_state):
 - ✅ Análisis de emergencia y auto-organización
 - ✅ Diseño de algoritmos eficientes
 - ✅ Validación experimental de modelos
-
----
-
-## 📞 Contacto y Soporte
-
-**Autor**: Naicriz
-**Email**: isalazarjara@gmail.com
-**Asignatura**: Grafos y Lenguajes Formales
-**Universidad**: [Tu Universidad]
-
-### Reportar Issues
-
-Para reportar errores o sugerir mejoras:
-
-1. Ve a la sección **Issues** del repositorio
-2. Crea un nuevo issue con:
-   - Descripción clara del problema
-   - Pasos para reproducir
-   - Información del sistema
-   - Screenshots si es relevante
-
-### Contribuir
-
-Las contribuciones son bienvenidas. Por favor:
-
-1. Fork el repositorio
-2. Crea una rama para tu funcionalidad
-3. Implementa los cambios
-4. Agrega tests si es aplicable
-5. Crea un Pull Request
 
 ---
 
