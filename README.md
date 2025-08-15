@@ -1,9 +1,9 @@
-# 🧬 Cellular Automata - Slime Mold Simulator (HAY QUE ACTUALIZAR)
+# 🧬 Cellular Automata - Slime Mold Simulator
 
 **Asignatura**: Grafos y Lenguajes Formales
 **Universidad**: Universidad Tecnológica Metropolitana
 **Autor**: Naicriz (isalazarjara@gmail.com)
-**Versión**: 0.0.2
+**Versión**: 1.0.0
 **Fecha**: Junio 2025
 
 ---
