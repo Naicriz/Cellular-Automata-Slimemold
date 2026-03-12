@@ -49,7 +49,7 @@ numba = "^0.61.2"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.4"
-black = "^25.1.0"
+black = "^26.3.1"
 ruff = "^0.12.0"
 mypy = "^1.13.0"
 pre-commit = "^4.0.1"
